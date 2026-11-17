@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <!-- Structured (JSON-like) single-line logs for the docker profile, readable logs otherwise. -->
+  <springProfile name="docker">
+    <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>{"ts":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","level":"%level","logger":"%logger{36}","thread":"%thread","msg":"%replace(%msg){'"','\\"'}"}%n</pattern>
+      </encoder>
+    </appender>
+    <root level="INFO"><appender-ref ref="JSON"/></root>
+  </springProfile>
+  <springProfile name="!docker">
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <root level="INFO"><appender-ref ref="CONSOLE"/></root>
+  </springProfile>
+</configuration>

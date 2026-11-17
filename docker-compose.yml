@@ -1,0 +1,169 @@
+# Six independent cache nodes + management API + PostgreSQL + React + Prometheus + Grafana.
+#   docker compose up --build
+#
+# Published ports (host -> container):
+#   3000 -> frontend (nginx)         http://localhost:3000
+#   8080 -> management-api           REST API + /actuator/prometheus
+#   9090 -> prometheus               http://localhost:9090
+#   3001 -> grafana                  http://localhost:3001
+#   5432 -> postgres (localhost only)
+# Cache nodes listen on 7001 INSIDE the private network only; they are not reachable from the host.
+
+x-cache-node: &cache-node
+  build:
+    context: .
+    dockerfile: docker/cache-node.Dockerfile
+  restart: unless-stopped
+  networks: [cachenet]
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cache-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-cachedb}
+      POSTGRES_USER: ${DB_USER:-cacheadmin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [cachenet]
+
+  cache-node-1:
+    <<: *cache-node
+    container_name: cache-node-1
+    environment:
+      NODE_ID: node-1
+      NODE_HOST: cache-node-1
+      NODE_PORT: "7001"
+      CLUSTER_SECRET: ${CLUSTER_SECRET:?set CLUSTER_SECRET in .env}
+      PEERS: "node-1=cache-node-1:7001,node-2=cache-node-2:7001,node-3=cache-node-3:7001,node-4=cache-node-4:7001,node-5=cache-node-5:7001,node-6=cache-node-6:7001"
+
+  cache-node-2:
+    <<: *cache-node
+    container_name: cache-node-2
+    environment:
+      NODE_ID: node-2
+      NODE_HOST: cache-node-2
+      NODE_PORT: "7001"
+      CLUSTER_SECRET: ${CLUSTER_SECRET:?set CLUSTER_SECRET in .env}
+      PEERS: "node-1=cache-node-1:7001,node-2=cache-node-2:7001,node-3=cache-node-3:7001,node-4=cache-node-4:7001,node-5=cache-node-5:7001,node-6=cache-node-6:7001"
+
+  cache-node-3:
+    <<: *cache-node
+    container_name: cache-node-3
+    environment:
+      NODE_ID: node-3
+      NODE_HOST: cache-node-3
+      NODE_PORT: "7001"
+      CLUSTER_SECRET: ${CLUSTER_SECRET:?set CLUSTER_SECRET in .env}
+      PEERS: "node-1=cache-node-1:7001,node-2=cache-node-2:7001,node-3=cache-node-3:7001,node-4=cache-node-4:7001,node-5=cache-node-5:7001,node-6=cache-node-6:7001"
+
+  cache-node-4:
+    <<: *cache-node
+    container_name: cache-node-4
+    environment:
+      NODE_ID: node-4
+      NODE_HOST: cache-node-4
+      NODE_PORT: "7001"
+      CLUSTER_SECRET: ${CLUSTER_SECRET:?set CLUSTER_SECRET in .env}
+      PEERS: "node-1=cache-node-1:7001,node-2=cache-node-2:7001,node-3=cache-node-3:7001,node-4=cache-node-4:7001,node-5=cache-node-5:7001,node-6=cache-node-6:7001"
+
+  cache-node-5:
+    <<: *cache-node
+    container_name: cache-node-5
+    environment:
+      NODE_ID: node-5
+      NODE_HOST: cache-node-5
+      NODE_PORT: "7001"
+      CLUSTER_SECRET: ${CLUSTER_SECRET:?set CLUSTER_SECRET in .env}
+      PEERS: "node-1=cache-node-1:7001,node-2=cache-node-2:7001,node-3=cache-node-3:7001,node-4=cache-node-4:7001,node-5=cache-node-5:7001,node-6=cache-node-6:7001"
+
+  cache-node-6:
+    <<: *cache-node
+    container_name: cache-node-6
+    environment:
+      NODE_ID: node-6
+      NODE_HOST: cache-node-6
+      NODE_PORT: "7001"
+      CLUSTER_SECRET: ${CLUSTER_SECRET:?set CLUSTER_SECRET in .env}
+      PEERS: "node-1=cache-node-1:7001,node-2=cache-node-2:7001,node-3=cache-node-3:7001,node-4=cache-node-4:7001,node-5=cache-node-5:7001,node-6=cache-node-6:7001"
+
+  management-api:
+    build:
+      context: .
+      dockerfile: docker/management-api.Dockerfile
+    container_name: cache-management-api
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+      cache-node-1: { condition: service_started }
+      cache-node-2: { condition: service_started }
+      cache-node-3: { condition: service_started }
+      cache-node-4: { condition: service_started }
+      cache-node-5: { condition: service_started }
+      cache-node-6: { condition: service_started }
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: postgres
+      DB_NAME: ${DB_NAME:-cachedb}
+      DB_USER: ${DB_USER:-cacheadmin}
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      CLUSTER_SECRET: ${CLUSTER_SECRET:?set CLUSTER_SECRET in .env}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      OPERATOR_PASSWORD: ${OPERATOR_PASSWORD:?set OPERATOR_PASSWORD in .env}
+      VIEWER_PASSWORD: ${VIEWER_PASSWORD:?set VIEWER_PASSWORD in .env}
+      SIMULATION_ENABLED: ${SIMULATION_ENABLED:-true}
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+    ports: ["8080:8080"]
+    networks: [cachenet]
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: cache-frontend
+    restart: unless-stopped
+    depends_on: [management-api]
+    ports: ["3000:80"]
+    networks: [cachenet]
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: cache-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - promdata:/prometheus
+    ports: ["9090:9090"]
+    depends_on: [management-api]
+    networks: [cachenet]
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    container_name: cache-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafanadata:/var/lib/grafana
+    ports: ["3001:3000"]
+    depends_on: [prometheus]
+    networks: [cachenet]
+
+volumes:
+  pgdata:
+  promdata:
+  grafanadata:
+
+networks:
+  cachenet:
+    driver: bridge

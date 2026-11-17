@@ -1,0 +1,8 @@
+# Durable PostgreSQL storage for local development. Combine with the dev profile
+# to retain the six embedded cache nodes: SPRING_PROFILES_ACTIVE=dev,postgres.
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cachedb}
+    username: ${DB_USER:cacheadmin}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver

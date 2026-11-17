@@ -1,0 +1,14 @@
+target/
+data/
+node_modules/
+frontend/dist/
+.env
+*.log
+.idea/
+*.iml
+.DS_Store
+k6/last-result.json
+.advisor-npm-cache/
+.advisor-test-tmp/
+.maven-repository/
+reliability-backups/

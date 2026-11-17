@@ -1,0 +1,2 @@
+ALTER TABLE audit_logs ADD COLUMN description VARCHAR(1000);
+ALTER TABLE audit_logs ADD COLUMN details VARCHAR(4000);

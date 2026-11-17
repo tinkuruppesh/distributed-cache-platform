@@ -1,0 +1,12 @@
+# Local development: file-backed H2 database + 6 cache nodes started INSIDE this JVM
+# (still six independent TCP servers on ports 7001-7006, each with its own memory store).
+spring:
+  datasource:
+    # Simulation history and management metadata survive API restarts locally.
+    # Use the `postgres` profile instead when validating PostgreSQL behavior.
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:file:./data/cachedb;DB_CLOSE_DELAY=-1}
+    username: sa
+    password: ""
+cluster:
+  embedded-nodes: 6
+  embedded-base-port: 7001

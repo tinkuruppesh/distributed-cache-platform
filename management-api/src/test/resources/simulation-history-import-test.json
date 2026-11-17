@@ -1,0 +1,150 @@
+{
+    "capturedAt":  "2026-11-15T22:26:43.7016745+05:30",
+    "source":  "Authenticated simulation list and detail endpoints; includes complete summary, report and event timeline for every returned simulation",
+    "recordCount":  1,
+    "records":  [
+                    {
+                        "summary":  {
+                                        "id":  "d7ced369",
+                                        "nodeId":  "node-1",
+                                        "mode":  "ISOLATE",
+                                        "phase":  "CANCELLED",
+                                        "outcome":  "CANCELLED",
+                                        "startedAt":  1794755407127,
+                                        "endedAt":  1794755434764,
+                                        "detectionMs":  6180,
+                                        "failoverMs":  3,
+                                        "recoveryMs":  974,
+                                        "requestsTotal":  1433,
+                                        "errorRatePct":  0.0
+                                    },
+                        "events":  [
+                                       {
+                                           "time":  1794755407346,
+                                           "type":  "SIM_TRAFFIC_STARTED",
+                                           "message":  "Generating ~60 requests/s through the gateway (80% reads / 20% writes)."
+                                       },
+                                       {
+                                           "time":  1794755408358,
+                                           "type":  "SIM_FAILURE_INJECTED",
+                                           "message":  "node-1 is now isolated (network partition)."
+                                       },
+                                       {
+                                           "time":  1794755410693,
+                                           "type":  "NODE_SUSPECTED",
+                                           "message":  "node-1 missed 2 heartbeats (3045ms silent) - SUSPECTED."
+                                       },
+                                       {
+                                           "time":  1794755414539,
+                                           "type":  "NODE_FAILED",
+                                           "message":  "node-1 declared FAILED after 6897ms without heartbeat (3 peer(s) confirmed, 5/6 members reachable)."
+                                       },
+                                       {
+                                           "time":  1794755414539,
+                                           "type":  "FAILOVER_STARTED",
+                                           "message":  "Promoting replicas of node-1 ..."
+                                       },
+                                       {
+                                           "time":  1794755414542,
+                                           "type":  "REPLICA_PROMOTED",
+                                           "message":  "Hash ring updated: replicas of node-1 are now primary. Requests flow to healthy nodes."
+                                       },
+                                       {
+                                           "time":  1794755414542,
+                                           "type":  "FAILOVER_COMPLETED",
+                                           "message":  "Routing updated 3ms after failover start; re-replicating in background."
+                                       },
+                                       {
+                                           "time":  1794755414598,
+                                           "type":  "REREPLICATION_COMPLETED",
+                                           "message":  "Re-replicated 93 entries (0 failed) in 49ms; 27 keys changed primary."
+                                       },
+                                       {
+                                           "time":  1794755414694,
+                                           "type":  "SIM_FAILOVER_DONE",
+                                           "message":  "Failure detected after 6180ms; routing updated 3ms after failover start."
+                                       },
+                                       {
+                                           "time":  1794755414694,
+                                           "type":  "SIM_AWAITING_RESTART",
+                                           "message":  "Traffic continues on the healthy nodes. Restart the node when ready."
+                                       },
+                                       {
+                                           "time":  1794755432201,
+                                           "type":  "SIM_NODE_RESTARTED",
+                                           "message":  "node-1 restarted - waiting for the cluster to detect and re-synchronize it."
+                                       },
+                                       {
+                                           "time":  1794755432974,
+                                           "type":  "NODE_RECOVERY_DETECTED",
+                                           "message":  "node-1 is answering heartbeats again - starting recovery."
+                                       },
+                                       {
+                                           "time":  1794755432976,
+                                           "type":  "NODE_RECOVERY_STARTED",
+                                           "message":  "Synchronizing node-1 (recovery) ..."
+                                       },
+                                       {
+                                           "time":  1794755433169,
+                                           "type":  "NODE_ACTIVE",
+                                           "message":  "node-1 is ACTIVE again: 73 entries synchronized in 191ms."
+                                       },
+                                       {
+                                           "time":  1794755434766,
+                                           "type":  "SIM_REPORT_READY",
+                                           "message":  "Report generated: outcome CANCELLED, error rate 0.0%."
+                                       }
+                                   ],
+                        "report":  {
+                                       "simulationId":  "d7ced369",
+                                       "failedNode":  "node-1",
+                                       "mode":  "ISOLATE",
+                                       "outcome":  "CANCELLED",
+                                       "failureStartedAt":  1794755408355,
+                                       "failureDetectedAt":  1794755414535,
+                                       "failoverStartedAt":  1794755414539,
+                                       "failoverCompletedAt":  1794755414542,
+                                       "restartedAt":  1794755432193,
+                                       "recoveryStartedAt":  1794755432976,
+                                       "recoveryCompletedAt":  1794755433167,
+                                       "detectionMs":  6180,
+                                       "failoverMs":  3,
+                                       "recoveryMs":  974,
+                                       "syncMs":  191,
+                                       "requestsTotal":  1433,
+                                       "requestsSucceeded":  1433,
+                                       "requestsFailed":  0,
+                                       "errorRatePct":  0.0,
+                                       "requestsServedByFallback":  11,
+                                       "keysPromoted":  27,
+                                       "reReplicated":  93,
+                                       "replicationSent":  574,
+                                       "replicationAcked":  542,
+                                       "replicationFailed":  32,
+                                       "averageLatencyMs":  1.374318,
+                                       "p95LatencyMs":  2.409,
+                                       "p99LatencyMs":  2.999,
+                                       "latencySamples":  500,
+                                       "requestsPerSecond":  51.85077975178203,
+                                       "affectedKeys":  [
+
+                                                        ],
+                                       "recoverySucceeded":  true,
+                                       "finalNodeStatus":  "ACTIVE",
+                                       "consistency":  {
+                                                           "keysChecked":  200,
+                                                           "consistentKeys":  200,
+                                                           "missingCopies":  0,
+                                                           "staleCopies":  0,
+                                                           "consistent":  true,
+                                                           "unreachableNodes":  0,
+                                                           "durationMs":  17
+                                                       },
+                                       "notes":  [
+                                                     "11 request(s) succeeded only after falling back to another replica (higher latency).",
+                                                     "Replication is asynchronous: a write acknowledged by the failed node but not yet copied to a replica can be lost. This report measures consistency AFTER recovery; it does not claim zero data loss."
+                                                 ]
+                                   }
+                    }
+                ]
+}

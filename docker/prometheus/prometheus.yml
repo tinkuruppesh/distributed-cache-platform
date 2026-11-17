@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # The management API exposes every cluster / cache / replication / failover metric (Micrometer).
+  - job_name: cache-platform
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['management-api:8080']

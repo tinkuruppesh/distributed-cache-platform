@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run Management API (dev: H2 + 6 embedded nodes)",
+      "request": "launch",
+      "mainClass": "com.distributedcache.DistributedCacheApplication",
+      "projectName": "management-api",
+      "args": "--spring.profiles.active=dev"
+    },
+    {
+      "type": "java",
+      "name": "Run ONE standalone cache node (port 7101)",
+      "request": "launch",
+      "mainClass": "com.distributedcache.node.CacheNodeMain",
+      "projectName": "cache-core",
+      "args": "--NODE_ID=solo --NODE_PORT=7101 --CLUSTER_SECRET=dev-cluster-secret-change-me"
+    }
+  ]
+}

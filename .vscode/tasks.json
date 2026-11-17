@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "Build all (skip tests)", "type": "shell", "command": "mvn -B -DskipTests install", "group": "build" },
+    { "label": "Run all backend tests", "type": "shell", "command": "mvn -B test", "group": "test" },
+    { "label": "Backend: run (dev profile)", "type": "shell", "command": "mvn -B -pl management-api spring-boot:run", "isBackground": true, "problemMatcher": [] },
+    { "label": "Frontend: install", "type": "shell", "command": "npm install", "options": { "cwd": "${workspaceFolder}/frontend" } },
+    { "label": "Frontend: dev server", "type": "shell", "command": "npm run dev", "options": { "cwd": "${workspaceFolder}/frontend" }, "isBackground": true, "problemMatcher": [] },
+    { "label": "Docker: up (full stack)", "type": "shell", "command": "docker compose up --build" }
+  ]
+}

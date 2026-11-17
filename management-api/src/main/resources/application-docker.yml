@@ -1,0 +1,15 @@
+# Docker Compose: PostgreSQL + six separate cache-node containers.
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:cachedb}
+    username: ${DB_USER:cacheadmin}
+    password: ${DB_PASSWORD}
+cluster:
+  embedded-nodes: 0
+  nodes:
+    - { id: node-1, host: cache-node-1, port: 7001 }
+    - { id: node-2, host: cache-node-2, port: 7001 }
+    - { id: node-3, host: cache-node-3, port: 7001 }
+    - { id: node-4, host: cache-node-4, port: 7001 }
+    - { id: node-5, host: cache-node-5, port: 7001 }
+    - { id: node-6, host: cache-node-6, port: 7001 }

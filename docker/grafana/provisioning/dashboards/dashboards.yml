@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: cache-platform
+    folder: Cache Platform
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards

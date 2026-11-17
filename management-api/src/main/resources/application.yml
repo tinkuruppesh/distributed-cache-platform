@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: distributed-cache-platform
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  flyway:
+    enabled: true
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: 8081
+
+management:
+  defaults:
+    metrics:
+      export:
+        enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: distributed-cache-platform
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: never
+
+app:
+  security:
+    # MUST be >= 32 characters. Override with the JWT_SECRET environment variable in any shared environment.
+    jwt-secret: ${JWT_SECRET:dev-only-jwt-secret-change-me-0123456789}
+    jwt-ttl-minutes: 60
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+    admin-password: ${ADMIN_PASSWORD:Admin@12345}
+    operator-password: ${OPERATOR_PASSWORD:Operator@12345}
+    viewer-password: ${VIEWER_PASSWORD:Viewer@12345}
+
+cluster:
+  # Internal node-to-node authentication secret. Change it in any shared environment.
+  secret: ${CLUSTER_SECRET:dev-cluster-secret-change-me}
+  replication-factor: 2
+  virtual-nodes: 100
+  heartbeat-interval-ms: 1000
+  failure-timeout-ms: 5000
+  ping-timeout-ms: 500
+  request-timeout-ms: 800
+  max-memory-bytes: 67108864
+  eviction-policy: LRU
+  sync-replication: false
+  # Failure simulation must only be enabled in an isolated demo/test environment.
+  simulation-enabled: ${SIMULATION_ENABLED:true}
